@@ -1,0 +1,33 @@
+version: "3"
+services:
+  mantisbt:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: mantisbt
+    container_name: "mantisbt"
+    volumes:
+      - "mantisbt-data:/var/mantisbt"
+      - "mantisbt-opt:/opt/mantisbt"
+    ports:
+      - "8811:80"
+    depends_on:
+      - db
+    environment:
+      MANTISBT_DB_HOST: "db:3306"
+  db:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: "mantisbt-db"
+    volumes:
+      - "db-data:/var/lib/mysql"
+    environment:
+        MYSQL_DATABASE: mantisbt
+        MYSQL_ROOT_PASSWORD: mantisbt
+volumes:
+  db-data:
+    driver: local
+  mantisbt-data:
+    driver: local
+  mantisbt-opt:
+    driver: local
